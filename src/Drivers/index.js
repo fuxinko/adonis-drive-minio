@@ -57,12 +57,42 @@ class Minio {
     })
   }
 
+
+/**
+   * Returns stats if a file exists.
+   *
+   * @method stats
+   * @async
+   *
+   * @param  {String} location
+   *
+   * @return {Promise<Object>}
+   */
   stats (location) {
     return new Promise((resolve, reject) => {
       this.minioClient.statObject(this._bucket.pull(), location, function (error, stat) {
-        if (error) return resolve(false)
+        if (error) return reject()
         return resolve(stat)
       })
+    })
+  }
+  /**
+   * List files.
+   *
+   * @method list
+   * @async
+   *
+   * @param  {String} location
+   *
+   * @return {Promise<Array>}
+   */
+  list (location = '') {
+    return new Promise((resolve, reject) => {
+      const stream = this.minioClient.listObjects(this._bucket.pull(), location, true)
+      const items = []
+      stream.on('data', (obj) => { items.push(obj) } )
+      stream.on('end', () => { resolve(items) } )
+      stream.on('error', (err) => {reject(err)} )
     })
   }
 
