@@ -57,6 +57,15 @@ class Minio {
     })
   }
 
+  stats (location) {
+    return new Promise((resolve, reject) => {
+      this.minioClient.statObject(this._bucket.pull(), location, function (error, stat) {
+        if (error) return resolve(false)
+        return resolve(stat)
+      })
+    })
+  }
+
   /**
    * Create a new file.
    *
